@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { defaultQuery, fetchProducts } from "@/lib/products";
-import type { Product, ProductList, SearchQuery } from "@/lib/products";
+import type { Product, ProductList, SearchQuery, ProductDraft } from "@/lib/products";
 import ProductSearchForm from "./ProductSearchForm";
+import ProductForm from "./ProductForm";
 
 type LoadState = "idle" | "loading" | "error" | "ready";
 
@@ -11,6 +12,11 @@ export default function ProductExplorer() {
     const [products, setProducts] = useState<Product[]>([]);
     const [status, setStatus] = useState<LoadState>("idle");
     const [errorMessage, setErrorMessage] = useState("");
+
+    function saveProduct(draft: ProductDraft) {
+        // เติม: เครื่องหมายที่คัดลอกสมาชิกเดิมทั้งหมดของ Array
+        setProducts([...products, { ...draft, id: Date.now() }]);
+    }
 
     function showResult(list: ProductList) {
         setProducts(list.products);
@@ -22,7 +28,6 @@ export default function ProductExplorer() {
             error instanceof Error ? error.message : "เรียกข้อมูลไม่สำเร็จ"
         );
         setStatus("error");
-        console.log
     }
 
     async function loadProducts(query: SearchQuery) {
@@ -40,6 +45,12 @@ export default function ProductExplorer() {
         <main>
             <h1>รายการสินค้า</h1>
             <ProductSearchForm onSearch={loadProducts} />
+            <ProductForm
+                editing={null}
+                onSave={saveProduct}
+                onCancel={() => { }}
+            />
+
             <button
                 type="button"
                 onClick={() => loadProducts(defaultQuery)}

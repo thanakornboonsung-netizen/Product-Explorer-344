@@ -1,4 +1,6 @@
+import { url } from "inspector";
 import { z } from "zod";
+
 // รายชื่อหมวดหมู่ คัดลอกจาก
 // https://dummyjson.com/products/category-list
 export const CATEGORIES = [
@@ -21,7 +23,7 @@ export const ProductSchema = z.object({
         .int("จำนวนคงเหลือต้องเป็นจำนวนเต็ม")
         .min(0, "จำนวนคงเหลือต้องไม่ติดลบ"),
     category: z.enum(CATEGORIES, { error: "กรุณาเลือกหมวดหมู่" }),
-    images: z.array(z.string().url()),
+    images: z.array(z.string()),
 });
 
 export const ProductListSchema = z.object({
@@ -84,6 +86,7 @@ export async function fetchProducts(
     // เติม: เมธอดที่อ่านเนื้อหาการตอบกลับเป็น JSON
     const data = await response.json();
 
+
     // เติม: เมธอดที่ตรวจข้อมูลแล้วคืนผลลัพธ์แทนการโยน Error
     const result = ProductListSchema.safeParse(data);
 
@@ -93,3 +96,8 @@ export async function fetchProducts(
 
     return result.data;
 }
+
+// เติม: เมธอดของ Zod ที่สร้าง Schema ใหม่โดยนำฟิลด์ที่ระบุออก
+export const ProductDraftSchema = ProductSchema.omit({ id: true });
+
+export type ProductDraft = z.infer<typeof ProductDraftSchema>;
