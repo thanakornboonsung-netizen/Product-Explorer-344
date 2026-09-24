@@ -24,12 +24,12 @@ export default function ProductSearchForm(
 
     return (
         <form onSubmit={handleSubmit(onSearch)} noValidate>
+            <label htmlFor="q">คำค้น</label>
+            <input id="q" {...register("q")} placeholder="ค้นหา" />
+
             <button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? "กำลังค้นหา" : "ค้นหา"}
             </button>
-
-            <label htmlFor="q">คำค้น</label>
-            <input id="q" {...register("q")} placeholder="ค้นหา" />
 
             <label htmlFor="limit">จำนวนรายการ</label>
             <input

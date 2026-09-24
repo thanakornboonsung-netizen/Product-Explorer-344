@@ -1,4 +1,3 @@
-import { url } from "inspector";
 import { z } from "zod";
 
 // รายชื่อหมวดหมู่ คัดลอกจาก
@@ -36,6 +35,10 @@ export const ProductListSchema = z.object({
 // เติม: ตัวช่วยของ Zod ที่อ่าน Type ออกมาจาก Schema
 export type Product = z.infer<typeof ProductSchema>;
 export type ProductList = z.infer<typeof ProductListSchema>;
+
+// เติม: เมธอดของ Zod ที่สร้าง Schema ใหม่โดยนำฟิลด์ที่ระบุออก
+export const ProductDraftSchema = ProductSchema.omit({ id: true});
+export type ProductDraft = z.infer<typeof ProductDraftSchema>;
 
 const API_BASE = "https://dummyjson.com";
 
@@ -96,8 +99,3 @@ export async function fetchProducts(
 
     return result.data;
 }
-
-// เติม: เมธอดของ Zod ที่สร้าง Schema ใหม่โดยนำฟิลด์ที่ระบุออก
-export const ProductDraftSchema = ProductSchema.omit({ id: true });
-
-export type ProductDraft = z.infer<typeof ProductDraftSchema>;

@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CATEGORIES, ProductDraftSchema } from "@/lib/products";
 import type { Product, ProductDraft } from "@/lib/products";
-import { validData } from "@hookform/resolvers/ajv/src/__tests__/__fixtures__/data.js";
 
 type ProductFormProps = {
     editing: Product | null;
@@ -22,13 +21,19 @@ export default function ProductForm(
         formState: { errors, isDirty, isValid },
     } = useForm<ProductDraft>({
         resolver: zodResolver(ProductDraftSchema),
-        mode: "onTouched",
+        mode: "onChange",
         defaultValues: editing
             ? {
-                title: editing.title, price: editing.price,
-                stock: editing.stock, category: editing.category
+                title: editing.title,
+                price: editing.price,
+                stock: editing.stock,
+                category: editing.category,
             }
-            : { title: "", price: undefined, stock: undefined },
+            : {
+                title: "",
+                price: undefined,
+                stock: undefined,
+            },
     });
 
     function saveProduct(values: ProductDraft) {
@@ -60,13 +65,12 @@ export default function ProductForm(
                 aria-invalid={!!errors.price}
                 aria-describedby="price-error"
             />
-            <span id="stock-error" role="alert">{errors.stock?.message}</span>
+            <span id="price-error" role="alert">{errors.price?.message}</span>
 
             <label htmlFor="stock">คงเหลือ</label>
             <input
                 id="stock"
                 type="number"
-                step="1"
                 required
                 {...register("stock", { valueAsNumber: true })}
                 aria-invalid={!!errors.stock}
@@ -103,8 +107,6 @@ export default function ProductForm(
                 <button type="button" onClick={onCancel}>ยกเลิก</button>
             )}
 
-
         </form>
     );
 }
-
