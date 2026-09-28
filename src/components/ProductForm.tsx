@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CATEGORIES, ProductDraftSchema } from "@/lib/products";
@@ -11,6 +12,27 @@ type ProductFormProps = {
     onCancel: () => void;
 };
 
+// ค่าเริ่มต้นของฟอร์มเพิ่มสินค้า ใช้ทั้งตอนสร้างและตอน reset
+const EMPTY_VALUES = {
+    title: "",
+    price: undefined,
+    stock: undefined,
+    category: "",
+    images: [],
+} as unknown as ProductDraft;
+
+function toFormValues(editing: Product | null): ProductDraft {
+    return editing
+        ? {
+            title: editing.title,
+            price: editing.price,
+            stock: editing.stock,
+            category: editing.category,
+            images: editing.images,
+        }
+        : EMPTY_VALUES;
+}
+
 export default function ProductForm(
     { editing, onSave, onCancel }: ProductFormProps
 ) {
@@ -18,29 +40,22 @@ export default function ProductForm(
         register,
         handleSubmit,
         reset,
-        formState: { errors, isDirty, isValid },
+        formState: { errors },
     } = useForm<ProductDraft>({
         resolver: zodResolver(ProductDraftSchema),
         mode: "onChange",
-        defaultValues: editing
-            ? {
-                title: editing.title,
-                price: editing.price,
-                stock: editing.stock,
-                category: editing.category,
-            }
-            : {
-                title: "",
-                price: undefined,
-                stock: undefined,
-            },
+        defaultValues: toFormValues(editing),
     });
+
+    // เมื่อสลับระหว่างเพิ่ม/แก้ไข ให้โหลดค่าใหม่เข้าฟอร์ม
+    useEffect(() => {
+        reset(toFormValues(editing));
+    }, [editing, reset]);
 
     function saveProduct(values: ProductDraft) {
         onSave(values);
-        reset();
+        reset(EMPTY_VALUES); // ล้างฟอร์มเป็นค่าว่างเสมอหลังบันทึก
     }
-
 
     return (
         <form onSubmit={handleSubmit(saveProduct)} noValidate>
@@ -60,7 +75,6 @@ export default function ProductForm(
                 type="number"
                 step="0.01"
                 required
-                // เติม: ตัวเลือกที่สั่งให้แปลงค่าเป็นตัวเลขก่อนส่งให้ Schema
                 {...register("price", { valueAsNumber: true })}
                 aria-invalid={!!errors.price}
                 aria-describedby="price-error"
@@ -95,18 +109,15 @@ export default function ProductForm(
                 {errors.category?.message}
             </span>
 
-            <button
-                type="submit"
-                // เติม: ค่าที่บอกว่าข้อมูลทั้งฟอร์มผ่าน Schema แล้วหรือไม่
-                disabled={!isDirty || !isValid}
-            >
+            {/* ไม่ใส่ disabled เพื่อให้กดได้เสมอ
+                ถ้าข้อมูลไม่ผ่าน handleSubmit จะแสดงข้อความ error ใต้แต่ละช่องให้เอง */}
+            <button type="submit">
                 {editing ? "บันทึกการแก้ไข" : "เพิ่มสินค้า"}
             </button>
 
             {editing && (
                 <button type="button" onClick={onCancel}>ยกเลิก</button>
             )}
-
         </form>
     );
 }

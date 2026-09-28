@@ -51,7 +51,7 @@ export default function ProductExplorer() {
     }
 
     function saveProduct(draft: ProductDraft) {
-        setProducts([...products, { ...draft, id: Date.now() }]);
+        setProducts((prev) => [{ ...draft, id: Date.now() }, ...prev]);
     }
 
     return (
@@ -111,12 +111,16 @@ export default function ProductExplorer() {
                                     <td>{item.stock}</td>
                                     <td>{item.category}</td>
                                     <td>
-                                        <img
-                                            src={item.images?.[0]}
-                                            alt={item.title}
-                                            width={100}
-                                            height={100}
-                                        />
+                                        {item.images?.[0] ? (
+                                            <img
+                                                src={item.images[0]}
+                                                alt={item.title}
+                                                width={100}
+                                                height={100}
+                                            />
+                                        ) : (
+                                            <span>ไม่มีรูปภาพ</span>
+                                        )}
                                     </td>
                                 </tr>
                             ))}
