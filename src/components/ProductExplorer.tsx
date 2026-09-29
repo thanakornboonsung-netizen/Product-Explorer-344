@@ -52,11 +52,9 @@ export default function ProductExplorer() {
     }
 
     function saveProduct(draft: ProductDraft) {
-        setProducts((prev) => [{ ...draft, id: Date.now() }, ...prev]);
-
         if (editing) {
-            setProducts(
-                products.map((product) =>
+            setProducts((prev) =>
+                prev.map((product) =>
                     product.id === editing.id
                         ? { ...product, ...draft }
                         : product
@@ -64,15 +62,7 @@ export default function ProductExplorer() {
             );
             setEditing(null);
         } else {
-            if (!editing) {
-                setProducts([
-                    ...products,
-                    {
-                        ...draft,
-                        id: Date.now(),
-                    },
-                ]);
-            }
+            setProducts((prev) => [{ ...draft, id: Date.now() }, ...prev]);
         }
     }
 
