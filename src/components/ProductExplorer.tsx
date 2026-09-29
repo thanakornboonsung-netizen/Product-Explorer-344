@@ -18,6 +18,7 @@ export default function ProductExplorer() {
     const [products, setProducts] = useState<Product[]>([]);
     const [status, setStatus] = useState<LoadState>("loading");
     const [errorMessage, setErrorMessage] = useState("");
+    const [editing, setEditing] = useState<Product | null>(null);
 
     useEffect(() => {
         fetchProducts(defaultQuery)
@@ -52,6 +53,37 @@ export default function ProductExplorer() {
 
     function saveProduct(draft: ProductDraft) {
         setProducts((prev) => [{ ...draft, id: Date.now() }, ...prev]);
+
+        if (editing) {
+            setProducts(
+                products.map((product) =>
+                    product.id === editing.id
+                        ? { ...product, ...draft }
+                        : product
+                )
+            );
+            setEditing(null);
+        } else {
+            if (!editing) {
+                setProducts([
+                    ...products,
+                    {
+                        ...draft,
+                        id: Date.now(),
+                    },
+                ]);
+            }
+        }
+    }
+
+    function removeProduct(id: number) {
+        setProducts((prev) =>
+            prev.filter((product) => product.id !== id)
+        );
+
+        if (editing?.id === id) {
+            setEditing(null);
+        }
     }
 
     return (
@@ -62,9 +94,9 @@ export default function ProductExplorer() {
 
             <div>
                 <ProductForm
-                    editing={null}
+                    editing={editing}
                     onSave={saveProduct}
-                    onCancel={() => { }}
+                    onCancel={() => setEditing(null)}
                 />
             </div>
 
@@ -121,6 +153,21 @@ export default function ProductExplorer() {
                                         ) : (
                                             <span>ไม่มีรูปภาพ</span>
                                         )}
+                                    </td>
+                                    <td>
+                                        <button
+                                            type="button"
+                                            onClick={() => setEditing(item)}
+                                        >
+                                            แก้ไข
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => removeProduct(item.id)}
+                                        >
+                                            ลบ
+                                        </button>
                                     </td>
                                 </tr>
                             ))}

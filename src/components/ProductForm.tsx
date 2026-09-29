@@ -15,8 +15,8 @@ type ProductFormProps = {
 // ค่าเริ่มต้นของฟอร์มเพิ่มสินค้า ใช้ทั้งตอนสร้างและตอน reset
 const EMPTY_VALUES = {
     title: "",
-    price: undefined,
-    stock: undefined,
+    price: "",
+    stock: "",
     category: "",
     images: [],
 } as unknown as ProductDraft;

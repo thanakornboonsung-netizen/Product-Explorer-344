@@ -291,6 +291,49 @@ td img {
   border: 1px solid var(--border);
 }
 
+/* ---------- Row action buttons (แก้ไข / ลบ) ---------- */
+td:has(> button) {
+  display: flex;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+td:has(> button) button {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 7px;
+}
+
+/* แก้ไข: ปุ่มรอง โทนม่วงอ่อน */
+td:has(> button) button:first-of-type {
+  background: var(--primary-soft);
+  color: var(--primary);
+  border-color: transparent;
+}
+
+td:has(> button) button:first-of-type:hover:not(:disabled) {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+/* ลบ: โทนแดง เตือนก่อนกด */
+td:has(> button) button:last-of-type {
+  background: transparent;
+  color: var(--danger);
+  border-color: var(--border);
+}
+
+td:has(> button) button:last-of-type:hover:not(:disabled) {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: var(--on-primary);
+}
+
+td:has(> button) button:last-of-type:focus-visible {
+  box-shadow: 0 0 0 3px rgb(220 38 38 / 0.25);
+}
+
 /* ---------- Mobile ---------- */
 @media (max-width: 40rem) {
   form {
@@ -313,5 +356,13 @@ td img {
 
   h1 {
     font-size: 1.4rem;
+  }
+
+  td:has(> button) {
+    flex-direction: column;
+  }
+
+  td:has(> button) button {
+    width: 100%;
   }
 }
