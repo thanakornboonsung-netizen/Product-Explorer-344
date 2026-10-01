@@ -27,10 +27,6 @@ export default function ProductSearchForm(
             <label htmlFor="q">คำค้น</label>
             <input id="q" {...register("q")} placeholder="ค้นหา" />
 
-            <button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "กำลังค้นหา" : "ค้นหา"}
-            </button>
-
             <label htmlFor="limit">จำนวนรายการ</label>
             <input
                 id="limit"
@@ -49,8 +45,9 @@ export default function ProductSearchForm(
                     <option key={field} value={field}>{field}</option>
                 ))}
             </select>
-
-            <button type="submit">ค้นหา</button>
+            <button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "กำลังค้นหา" : "ค้นหา"}
+            </button>
         </form>
     );
 }
